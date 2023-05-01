@@ -1,0 +1,293 @@
+#BASIC CODE
+SELECT
+FROM
+WHERE
+
+#TO SELECT THE COLUMNS THAT CONTAINS NAME AND CITY FROM CUSTOMER_DATA DATASET IN THE CUSTOMER_ADDRESS TABLE
+SELECT
+	name,
+	city
+FROM
+	customer_data.customer_address
+
+#TO INSERT A NEW CUSTOMER INTO AN EXISTING DATASET AND TABLE
+INSERT INTO customer_data.customer_address
+	(customer_id,address,city,state,zipcode,country)-------------- the columns into which to insert
+VALUES
+	(2645, ‘333 SQL Road’, ‘Jackson’, ‘MI’, 49202, ‘US’)---------- the values to be filled into the columns
+
+#TO UPDATE THE ADDRESS OF A CLIENT
+UPDATE customer_data.customer_address
+SET address = ‘123 New Address’
+WHERE customers_id = 2645
+#HOW TO CREATE A NEW TABLE THAT DOES NOT EXIST IN THE DATABASE ALREADY
+
+
+#HOW TO WRITE A DISTINCT CLAUSE THAT WILL REMOVE DUPLICATES
+SELECT
+	DISTINCT customer_id 
+FROM
+	Customer_data.customer_address
+
+#HOW TO GET THE LENGTH OF A STRING
+SELECT 
+	state
+FROM 
+customer 
+WHERE LENGTH(state) > 3
+
+#TO CHECK IF ALL COUNTRY CODES HAVE THE SAME LENGTH 
+SELECT
+	LENGTH(country) AS letters_in_country 
+FROM 
+	Customer_data.customer_address
+
+#USING THE SUBSTRING FUNCTION TO PULL THE FIRST TWO LETTERS IN A STRING
+SELECT
+	 customer_id
+FROM
+	customer_data.customer_address
+WHERE
+	SUBSTR(country,1,2) = ‘US’
+
+#HOW TO REMOVE EXTRA SPACES IN A STRING USING THE TRIM FUNCTION
+SELECT
+	 DISTINCT customer_id
+FROM
+	customer_data.customer_address
+WHERE
+	TRIM(state)=’OH’
+
+#USING A CASE STATEMENT TO CORRECT SPELLINGS
+SELECT 
+	customer_id,
+	CASE
+WHEN first_name = ‘Tnoy’  THEN ‘Tony’
+ELSE first_name
+END AS cleaned_name
+FROM 
+	customer_data.customer_name
+
+#USING THE WHERE CLAUSE TO FILTER IN A DATA BASE
+SELECT
+*
+FROM
+	customer_data.customer_address
+WHERE
+	Customer_id = ‘2645’
+
+#SORTING DATA USING SEQUEL
+SELECT
+*
+FROM
+	customer_data.customer_address
+ORDER BY date DESC
+
+#HOW TO FILTER SORTED DATA USING SEQUEL
+SELECT
+*
+FROM
+	customer_data.customer_address
+WHERE customer_id = ‘2645’
+ORDER BY date DESC
+
+#HOW TO FILTER AND SORT 2 DIFFERENT COLUMNS DATA USING SEQUEL
+SELECT
+*
+FROM
+	customer_data.customer_address
+WHERE customer_id = ‘2645’
+AND sales > 50
+ORDER BY date DESC
+
+#HOW TO USE THE CONCAT FUNCTION TO JOIN STRINGS TOGETHER FROM DIFFERENT COLUMNS
+SELECT
+	Usertype,
+CONCAT(start_station_name, “ to “, end_station_name) AS route
+COUNT(*) AS num_trips
+ROUND(AVG(cast(tripduration as int64/60),2))) AS duration
+FROM
+	‘bigquery-public-data.new_york.citibikes_trips’
+GROUP BY
+	start_station_name, end_station_name, usertype
+ORDER BY
+	num_trips DESC
+LIMIT 10
+
+#AGGREGATING DATA USING THE JOIN FUNCTION
+SELECT
+*
+FROM
+	tableA
+LEFT JOIN
+	tableB
+ON
+	keyA=keyB
+This is the same as 
+SELECT
+*
+FROM
+	tableB
+RIGHT JOIN
+	tableA
+ON
+	keyA=keyB
+OUTER JOIN FUNCTION
+INNER JOIN FUNCTION
+SELECT
+	employee.name AS employee_name
+	employee.role AS employee_role
+	department.name AS department_name
+FROM
+	employee
+INNER JOIN
+	departments ON
+employees.departments_id = departments.department_id
+
+#LEFT JOIN FUNCTION
+SELECT
+	employee.name AS employee_name
+	employee.role AS employee_role
+	department.name AS department_name
+FROM
+	employee
+LEFT JOIN
+	departments ON
+employees.departments_id = departments.department_id
+
+#RIGHT JOIN FUNCTION
+SELECT
+	employee.name AS employee_name
+	employee.role AS employee_role
+	department.name AS department_name
+FROM
+	employee
+RIGHT JOIN
+	departments ON
+employees.departments_id = departments.department_id
+
+#FULL OUTER JOIN FUNCTION
+SELECT
+	employee.name AS employee_name
+	employee.role AS employee_role
+	department.name AS department_name
+FROM
+	employee
+FULL OUTER JOIN
+	departments ON
+employees.departments_id = departments.department_id
+
+#COUNT AND COUNT DISTINCT FUNCTIONS
+SELECT
+	*
+FROM
+	Warehouse_orders.warehouse
+
+#SUBQUERIES
+SELECT
+		Station_id,
+		Num_bikes_available
+(SELECT
+		AVG(num_bikes_available)
+FROM bigquery-public-data.new_york.citibike_stations) AS avg_num_bikes_available
+FROM bigquery-public-data.new_york.citibike_stations
+RUN
+
+SELECT
+Station_id,
+Name,
+Number_of_rides AS number_of_rides_starting_at_station
+FROM
+(
+SELECT
+Start_station_id,
+COUNT(*) number_of_rides
+FROM 
+bigquery-public-data.new_york.citibike_trips
+GROUP BY start_station_id
+)
+	AS station_num_trips
+	INNER JOIN 
+	bigquery-public-data.new_york.citibike_stations ON station_id = start_station_id
+ORDER BY number_of_rides DESC
+GET A LIST OF STATIONS SUBSCRIBERS USE
+SELECT
+Station_id,
+Name,
+FROM
+bigquery-public-data.new_york.citibike_stations
+WHERE
+	Station_id IN
+	(
+	SELECT
+		Start_station_id
+	FROM 
+		bigquery-public-data.new_york.citibike_trips
+	WHERE
+		User_type = 
+	‘Subcriber’
+RUN
+
+#AGGREGATING DATA USING SUBQUERIES
+#FOR EXAMPLE, WHICH WAREHOUSES ARE DELIVERING THE MOST ORDERS
+SELECT 
+	Warehouse.warehouse_id,
+	CONCAT(warehouse.state, ‘ : ‘ , warehouse.warehouse_allias) AS warehouse_name, 
+	COUNT(orders.orders_id) AS number_of_orders
+SELECT
+(
+	COUNT(*)
+FROM warehouse_orders.orders orders)
+AS total_orders, 
+CASE 
+	WHEN COUNT(orders.orders_id)/SELECT COUNT(*) FROM warehouse_orders.orders orders ≤ 0.2
+	THEN ‘fulfilled’ 0.20% of orders’
+	WHEN COUNT(orders.orders_id)/SELECT COUNT(*) FROM warehouse_orders.orders orders > 0.2
+	AND COUNT(orders.orders_id)/SELECT COUNT(*) FROM warehouse_orders.orders orders = 0.6
+	THEN ‘Fulfilled 21-60% of orders’
+	ELSE 
+	‘Fulfilled more than 60% of orders’
+	END AS ‘Fulfilment summary’
+FROM warehouse_orders.warehouse warehouse
+LEFT JOIN warehouse_orders.orders orders
+	ON orders.warehouse_id = warehouse.warehouse_id
+
+GROUP BY warehouse.warehouse_id,
+Warehouse_name
+HAVING 
+	COUNT(oders.orders_id > 0
+RUN
+
+#USING THE WITH CLAUSE
+WITH trips_over _1_hr AS (
+	SELECT *
+	FROM bigquery-public-data.new_york.citibike_trips
+	WHERE 
+		Tripduration >= 60
+)
+
+#COUNT HOW MANY TRIPS ARE 60+ MINUTES LONG
+SELECT
+	COUNT(*) AS cnt
+FROM
+	trips_over _1_hr
+RUN
+
+#USING THE SELECT INTO CLAUSE
+SELECT 
+	*
+INTO
+	Africansales
+FROM
+	Globalsales
+WHERE
+	Region = “Africa”
+
+#CREATE TABLE CLAUSE
+CREATE TABLE Africasales AS
+(
+SELECT*
+FROM Globalsales
+WHERE Region = “Africa”
+)
+
